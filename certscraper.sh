@@ -16,12 +16,12 @@ function cleanup {
 trap cleanup EXIT
 
 # Download the supplied URL and extract a list of links.
-# Exclude *.crl, because these files are almost certainly not certificates and might be huge CRLs.
+# Exclude *.crl and *.pdf, because these files are almost certainly not certificates (and they might be huge!)
 echo -e "\nDownloading $1..."
 INPUT_FILE=`mktemp -p "$WORK_DIR"`
 wget -nv -O "$INPUT_FILE" -U certscraper "$1"
 echo -e "\nExtracting links from $1..."
-lynx -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" > "$WORK_DIR/urls.txt"
+lynx -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" > "$WORK_DIR/urls.txt"
 
 # Download each of the extracted links in the temporary directory.
 cd "$WORK_DIR"
