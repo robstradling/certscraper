@@ -1,0 +1,4 @@
+http://repository.eid.belgium.be/certificates.php?cert=Root&lang=en
+http://repository.eid.belgium.be/certificates.php?cert=Citizen&lang=en
+http://repository.eid.belgium.be/certificates.php?cert=Foreigner&lang=en
+http://repository.eid.belgium.be/certificates.php?cert=Government&lang=en
