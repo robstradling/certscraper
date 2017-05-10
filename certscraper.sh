@@ -15,18 +15,20 @@ function cleanup {
 # Register the cleanup function to be called on the EXIT signal.
 trap cleanup EXIT
 
+WGET_OPTIONS="-T 20 -t 1 -nv -U certscraper"
+
 # Download the supplied URL and extract a list of links.
 # Exclude *.crl and *.pdf, because these files are almost certainly not certificates (and they might be huge!)
 echo -e "\nDownloading $1..."
 INPUT_FILE=`mktemp -p "$WORK_DIR"`
-wget -nv -O "$INPUT_FILE" -U certscraper "$1"
+wget $WGET_OPTIONS -O "$INPUT_FILE" "$1"
 echo -e "\nExtracting links from $1..."
-lynx -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" > "$WORK_DIR/urls.txt"
+lynx -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" > "$WORK_DIR/urls.txt"
 
 # Download each of the extracted links in the temporary directory.
 cd "$WORK_DIR"
 echo -e "\nDownloading files..."
-wget -nv -U "MSIE" -i urls.txt
+wget $WGET_OPTIONS -i urls.txt
 
 # Attempt to parse each of the downloaded files as: a PEM certificate, a DER certificate.
 echo -e "\nParsing certificates..."
@@ -61,17 +63,18 @@ for f in *.crt; do
     echo -n "b64cert=" > "$CERT_FILENAME.urlencoded"
     perl -MURI::Escape -ne 'print uri_escape($_)' "$CERT_FILENAME" >> "$CERT_FILENAME.urlencoded"
     # Use crt.sh's Certificate Submission Assistant to prepare the JSON data to submit to /ct/v1/add-chain.
-    wget -nv --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain
+    wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain
     rm "$CERT_FILENAME.urlencoded"
   fi
 done
 for acj in *_UNKNOWN.add-chain.json; do
   if [ -e "$acj" ]; then
     echo -e "\nSubmitting $acj"
-    wget -nv -O "$acj.sct.dodo" --post-file "$acj" https://dodo.ct.comodo.com/ct/v1/add-chain
-    wget -nv -O "$acj.sct.rocketeer" --post-file "$acj" https://ct.googleapis.com/rocketeer/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.dodo" --post-file "$acj" https://dodo.ct.comodo.com/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.rocketeer" --post-file "$acj" https://ct.googleapis.com/rocketeer/ct/v1/add-chain
   fi
 done
+echo
 
 # Tidy up the SCT filenames.
 rename add-chain.json.sct sct *.add-chain.json.sct.*
