@@ -43,7 +43,8 @@ find -maxdepth 1 -type f -exec tar xvfJ '{}' 2>/dev/null ';'
 find -maxdepth 1 -type f -exec openssl pkcs7 -in '{}' -out '{}'.txt -print_certs 2>/dev/null ';'
 find -maxdepth 1 -type f -exec openssl pkcs7 -inform der -in '{}' -out '{}'.txt -print_certs 2>/dev/null ';'
 
-# TODO: Attempt to parse each file as a text "bundle" of PEM certificates.
+# Attempt to parse each file as a bundle of PEM certificates.
+find -maxdepth 1 -type f -exec ../splitbundle.sh '{}' ';' | tr '\n' ' '
 
 # Attempt to parse each file as a (PEM or DER) certificate.
 echo -e "\nParsing certificates..."
