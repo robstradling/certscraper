@@ -26,25 +26,32 @@ wget $WGET_OPTIONS -O "$INPUT_FILE" "$1"
 echo -e "\nExtracting links from $1..."
 lynx -cfg=lynx.cfg -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" | grep -v "$INPUT_BASEURL" | sort | uniq > "$WORK_DIR/urls.txt"
 
-# Download each of the extracted links in the temporary directory.
+# Download each of the extracted links in the temporary working directory.
 cd "$WORK_DIR"
 echo -e "\nDownloading files..."
 wget $WGET_OPTIONS -i urls.txt
 
 # Attempt to unzip and untar each file.
+echo -e "\nUnpacking files..."
 find -maxdepth 1 -type f -exec unzip -j -u '{}' 2>/dev/null ';'
 find -maxdepth 1 -type f -exec tar xvfz '{}' 2>/dev/null ';'
 find -maxdepth 1 -type f -exec tar xvfj '{}' 2>/dev/null ';'
 find -maxdepth 1 -type f -exec tar xvfZ '{}' 2>/dev/null ';'
 find -maxdepth 1 -type f -exec tar xvfJ '{}' 2>/dev/null ';'
 
-# Attempt to parse each of the downloaded files as: a PEM certificate, a DER certificate.
+# Attempt to parse each file as (PEM or DER) PKCS#7.
+find -maxdepth 1 -type f -exec openssl pkcs7 -in '{}' -out '{}'.txt -print_certs 2>/dev/null ';'
+find -maxdepth 1 -type f -exec openssl pkcs7 -inform der -in '{}' -out '{}'.txt -print_certs 2>/dev/null ';'
+
+# TODO: Attempt to parse each file as a text "bundle" of PEM certificates.
+
+# Attempt to parse each file as a (PEM or DER) certificate.
 echo -e "\nParsing certificates..."
 TMP_DIR="$WORK_DIR/tmp"
 mkdir "$TMP_DIR"
 find -maxdepth 1 -type f -exec openssl x509 -in '{}' -out "$TMP_DIR/{}.crt" 2>/dev/null ';'
 find -maxdepth 1 -type f -exec openssl x509 -inform der -in '{}' -out "$TMP_DIR/{}.crt" 2>/dev/null ';'
-# TODO: Also attempt to parse as (PEM or DER) PKCS#7.
+
 cd "$TMP_DIR"
 ls -1 | sed "s/.crt$//g"
 
