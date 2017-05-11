@@ -15,7 +15,7 @@ function cleanup {
 # Register the cleanup function to be called on the EXIT signal.
 trap cleanup EXIT
 
-WGET_OPTIONS="-T 20 -t 1 -nv -U certscraper"
+WGET_OPTIONS="-T 20 -t 1 -nv -U certscraper --no-check-certificate"
 
 # Download the supplied URL and extract a list of links.
 # Exclude *.crl and *.pdf, because these files are almost certainly not certificates (and they might be huge!)
@@ -23,7 +23,7 @@ echo -e "\nDownloading $1..."
 INPUT_FILE=`mktemp -p "$WORK_DIR"`
 wget $WGET_OPTIONS -O "$INPUT_FILE" "$1"
 echo -e "\nExtracting links from $1..."
-lynx -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" > "$WORK_DIR/urls.txt"
+lynx -cfg=lynx.cfg -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" > "$WORK_DIR/urls.txt"
 
 # Download each of the extracted links in the temporary directory.
 cd "$WORK_DIR"
