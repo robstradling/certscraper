@@ -1,0 +1,1 @@
+./certscraper.sh "$1" &
