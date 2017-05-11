@@ -31,13 +31,16 @@ cd "$WORK_DIR"
 echo -e "\nDownloading files..."
 wget $WGET_OPTIONS -i urls.txt
 
+# Attempt to unzip each file.
+find -maxdepth 1 -type f -exec unzip -j -u '{}' 2>/dev/null ';'
+
 # Attempt to parse each of the downloaded files as: a PEM certificate, a DER certificate.
 echo -e "\nParsing certificates..."
 TMP_DIR="$WORK_DIR/tmp"
 mkdir "$TMP_DIR"
 find -maxdepth 1 -type f -exec openssl x509 -in '{}' -out "$TMP_DIR/{}.crt" 2>/dev/null ';'
 find -maxdepth 1 -type f -exec openssl x509 -inform der -in '{}' -out "$TMP_DIR/{}.crt" 2>/dev/null ';'
-# TODO: Also attempt to parse as (PEM or DER) PKCS#7, .zip, .tgz.
+# TODO: Also attempt to parse as (PEM or DER) PKCS#7, .tgz.
 cd "$TMP_DIR"
 ls -1 | sed "s/.crt$//g"
 
