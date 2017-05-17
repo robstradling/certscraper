@@ -24,7 +24,7 @@ INPUT_FILE=`mktemp -p "$WORK_DIR"`
 INPUT_BASEURL=`echo "$1" | sed "s/#.*$//g"`
 wget $WGET_OPTIONS -O "$INPUT_FILE" "$1"
 echo -e "\nExtracting links from $1..."
-lynx -cfg=lynx.cfg -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" | grep -v "$INPUT_BASEURL" | sort | uniq > "$WORK_DIR/urls.txt"
+lynx -cfg=lynx.cfg -connect_timeout=20 -dump -force_html -listonly -useragent=certscraper "$1" 2>/dev/null | grep "://" | sed "s/^.* //g" | grep -v "\.crl$" | grep -v "\.pdf$" | grep -v "^$INPUT_BASEURL$" | sort | uniq > "$WORK_DIR/urls.txt"
 
 # Download each of the extracted links in the temporary working directory.
 cd "$WORK_DIR"
