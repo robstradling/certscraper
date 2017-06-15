@@ -46,6 +46,9 @@ find -maxdepth 1 -type f -exec openssl pkcs7 -inform der -in '{}' -out '{}'.txt 
 # Attempt to parse each file as a bundle of PEM certificates.
 find -maxdepth 1 -type f -exec ../splitbundle.sh '{}' ';' | tr '\n' ' '
 
+# Attempt to parse each file as an XML trust list.
+find -maxdepth 1 -type f -exec ../parsexmltrustlist.sh '{}' ';'
+
 # Attempt to parse each file as a (PEM or DER) certificate.
 echo -e "\nParsing certificates..."
 TMP_DIR="$WORK_DIR/tmp"
