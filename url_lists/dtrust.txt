@@ -1,0 +1,8 @@
+https://www.bundesdruckerei.de/de/2752-d-trust-ssl
+https://www.bundesdruckerei.de/de/gateway-zertifikat
+https://www.bundesdruckerei.de/de/2834-d-trust-softtoken-class-ii
+https://www.bundesdruckerei.de/de/2873-d-trust-ssl-roots
+https://www.bundesdruckerei.de/de/2826-d-trust-roots
+https://www.bundesdruckerei.de/de/2828-gematik-roots-2048
+https://www.bundesdruckerei.de/de/2827-gematik-roots
+https://www.bundesdruckerei.de/de/2831-sperrlisten-crls
