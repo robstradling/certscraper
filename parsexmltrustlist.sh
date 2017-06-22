@@ -1,11 +1,14 @@
 #!/bin/bash
 
+grep "<?xml" "$1" > /dev/null
+if [ $? -eq 1 ]; then
+  exit 1
+fi
+
 TEMP_DIR=`mktemp -d`
-echo $TEMP_DIR
 
 function extractxmlelements() {
   TEMP_FILE=`mktemp -p "$TEMP_DIR"`
-  echo $TEMP_FILE
   xml_grep "$2" "$1" | tr -d '\n' | tr -d [:blank:] > "$TEMP_FILE"
   sed -i "s/<\/$2><$2>/\n/g" "$TEMP_FILE"
   sed -i "s/<\/$2>.*$//g" "$TEMP_FILE"
