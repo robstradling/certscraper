@@ -82,7 +82,9 @@ for f in *.crt; do
     echo -n "b64cert=" > "$CERT_FILENAME.urlencoded"
     perl -MURI::Escape -ne 'print uri_escape($_)' "$CERT_FILENAME" >> "$CERT_FILENAME.urlencoded"
     # Use crt.sh's Certificate Submission Assistant to prepare the JSON data to submit to /ct/v1/add-chain.
-    wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain
+    echo -n "$SHA256_FINGERPRINT: "
+    echo -n "&onlyonechain=Y" >> "$CERT_FILENAME.urlencoded"
+    wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain 2>&1
     rm "$CERT_FILENAME.urlencoded"
   fi
 done
