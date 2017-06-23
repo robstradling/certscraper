@@ -70,22 +70,25 @@ mkdir -p "$CERT_DIR/source"
 echo -e "\nBuilding JSON to submit to /ct/v1/add-chain..."
 for f in *.crt; do
   if [ -e "$f" ]; then
-    # Rename the certificate file to <SHA-256(Certificate)>.crt.
+    # Prepare the new certificate filename: <SHA-256(Certificate)>.crt.
     SHA256_FINGERPRINT=`openssl x509 -fingerprint -sha256 -in "$f" -noout | sed "s/^SHA256 Fingerprint=//g" | sed "s/://g"`
     CERT_FILENAME="$SHA256_FINGERPRINT.crt"
-    mv "$f" "$CERT_FILENAME"
     # Record where this certificate was found.
     echo "$1" >> "$CERT_DIR/source/$SHA256_FINGERPRINT.txt"
     sort "$CERT_DIR/source/$SHA256_FINGERPRINT.txt" | uniq > "$CERT_DIR/source/$SHA256_FINGERPRINT.temp"
     mv "$CERT_DIR/source/$SHA256_FINGERPRINT.temp" "$CERT_DIR/source/$SHA256_FINGERPRINT.txt"
-    # URL-encode this certificate.
-    echo -n "b64cert=" > "$CERT_FILENAME.urlencoded"
-    perl -MURI::Escape -ne 'print uri_escape($_)' "$CERT_FILENAME" >> "$CERT_FILENAME.urlencoded"
-    # Use crt.sh's Certificate Submission Assistant to prepare the JSON data to submit to /ct/v1/add-chain.
-    echo -n "$SHA256_FINGERPRINT: "
-    echo -n "&onlyonechain=Y" >> "$CERT_FILENAME.urlencoded"
-    wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain 2>&1
-    rm "$CERT_FILENAME.urlencoded"
+    if [ ! -f "$CERT_FILENAME" ]; then
+      # Rename the certificate file.
+      mv "$f" "$CERT_FILENAME"
+      # URL-encode this certificate.
+      echo -n "b64cert=" > "$CERT_FILENAME.urlencoded"
+      perl -MURI::Escape -ne 'print uri_escape($_)' "$CERT_FILENAME" >> "$CERT_FILENAME.urlencoded"
+      # Use crt.sh's Certificate Submission Assistant to prepare the JSON data to submit to /ct/v1/add-chain.
+      echo -n "$SHA256_FINGERPRINT: "
+      echo -n "&onlyonechain=Y" >> "$CERT_FILENAME.urlencoded"
+      wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain 2>&1
+      rm "$CERT_FILENAME.urlencoded"
+    fi
   fi
 done
 for acj in *_UNKNOWN.add-chain.json; do
