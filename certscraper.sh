@@ -95,7 +95,11 @@ for acj in *_UNKNOWN.add-chain.json; do
   if [ -e "$acj" ]; then
     echo -e "\nSubmitting $acj"
     wget $WGET_OPTIONS -O "$acj.sct.dodo" --post-file "$acj" https://dodo.ct.comodo.com/ct/v1/add-chain
-    wget $WGET_OPTIONS -O "$acj.sct.rocketeer" --post-file "$acj" https://ct.googleapis.com/rocketeer/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.submariner" --post-file "$acj" https://ct.googleapis.com/submariner/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.daedalus" --post-file "$acj" https://ct.googleapis.com/daedalus/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.plausible" --post-file "$acj" https://plausible.ct.nordu.net/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.clicky" --post-file "$acj" https://clicky.ct.letsencrypt.org/ct/v1/add-chain
+    wget $WGET_OPTIONS -O "$acj.sct.behindthesofa" --post-file "$acj" https://ct.filippo.io/behindthesofa/ct/v1/add-chain
   fi
 done
 echo
