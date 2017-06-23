@@ -86,7 +86,7 @@ for f in *.crt; do
       # Use crt.sh's Certificate Submission Assistant to prepare the JSON data to submit to /ct/v1/add-chain.
       echo -n "$SHA256_FINGERPRINT: "
       echo -n "&onlyonechain=Y" >> "$CERT_FILENAME.urlencoded"
-      wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain 2>&1
+      wget $WGET_OPTIONS --content-disposition --post-file "$CERT_FILENAME.urlencoded" https://crt.sh/gen-add-chain 2>&1 | tail -n 1
       rm "$CERT_FILENAME.urlencoded"
     fi
   fi
