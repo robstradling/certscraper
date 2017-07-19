@@ -1,0 +1,12 @@
+https://support.globalsign.com/customer/en/portal/articles/1426602-globalsign-root-certificates
+https://support.globalsign.com/customer/en/portal/articles/1223298-alphassl-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1464460-domainssl-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1219303-organizationssl-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1223443-extendedssl-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/2084405-intranetssl-root-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/2084482-cloudssl-intermediate-certificate
+https://support.globalsign.com/customer/en/portal/articles/1231882-code-signing-standard-ev-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/2085904-aatl-adobe-cds-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1211662-personalsign-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1211591-trusted-root-intermediate-certificates
+https://support.globalsign.com/customer/en/portal/articles/1223453-administration-intermediate-certificates

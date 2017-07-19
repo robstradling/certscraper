@@ -1,0 +1,2 @@
+https://www.ssl.com/repository/
+https://www.ssl.com/article/ssl-com-root-certificates/
